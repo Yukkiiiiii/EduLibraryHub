@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using OnlineLibrary.Models;
+
 namespace EduLibraryHub
 {
     public class Program
@@ -7,7 +10,7 @@ namespace EduLibraryHub
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<LibraryDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LibraryDbConnection")));
 
             var app = builder.Build();
 
