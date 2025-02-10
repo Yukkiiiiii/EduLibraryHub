@@ -1,62 +1,52 @@
-using System.Linq;
-using System.Web.Mvc;
-using EduLibraryHub.Models;
+п»їusing Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using OnlineLibrary.Models;
-
-namespace OnlineLibrary.Controllers
+using System.Threading.Tasks;
+public class AccountController : Controller
 {
-    public class AccountController : Controller
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+
+    public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
     {
-        private LibraryDbContext db = new LibraryDbContext();
+        _userManager = userManager;
+        _signInManager = signInManager;
+    }
 
-        // GET: Register
-        public ActionResult Register()
-        {
-            return View();
-        }
+    // Register User
+    public IActionResult Register() => View();
 
-        // POST: Register
-        [HttpPost]
-        public ActionResult Register(User user)
+    [HttpPost]
+    public async Task<IActionResult> Register(User model, string password)
+    {
+        if (ModelState.IsValid)
         {
-            if (ModelState.IsValid)
+            var user = new User { UserName = model.Email, Email = model.Email, Name = model.Name, Role = "User" };
+            var result = await _userManager.CreateAsync(user, password);
+            if (result.Succeeded)
             {
-                // Хеширане на паролата
-                user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-                db.Users.Add(user);
-                db.SaveChanges();
-                return RedirectToAction("Login");
-            }
-            return View(user);
-        }
-
-        // GET: Login
-        public ActionResult Login()
-        {
-            return View();
-        }
-
-        // POST: Login
-        [HttpPost]
-        public ActionResult Login(string email, string password)
-        {
-            var user = db.Users.FirstOrDefault(u => u.Email == email);
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
-            {
-                Session["UserId"] = user.Id;
-                Session["Username"] = user.Username;
+                await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
-            ViewBag.Error = "Invalid email or password.";
-            return View();
         }
+        return View(model);
+    }
 
-        // GET: Logout
-        public ActionResult Logout()
-        {
-            Session.Clear();
-            return RedirectToAction("Login");
-        }
+    // Login
+    public IActionResult Login() => View();
+
+    public async Task<IActionResult> Login(string email, string password)
+    {
+        var result = await _signInManager.PasswordSignInAsync(email, password, false, false);
+        if (result.Succeeded) return RedirectToAction("Index", "Home");
+
+        ModelState.AddModelError("", "Invalid login attempt.");
+        return View();
+    }
+
+    // Logout
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Login");
     }
 }

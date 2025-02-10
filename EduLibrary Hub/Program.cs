@@ -1,39 +1,44 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using OnlineLibrary.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
-namespace EduLibraryHub
+var builder = WebApplication.CreateBuilder(args);
+
+// Database Connection
+builder.Services.AddDbContext<LibraryDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Identity Setup
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<LibraryDbContext>()
+    .AddDefaultTokenProviders();
+
+// Authentication & Authorization Middleware
+builder.Services.ConfigureApplicationCookie(options =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+    options.LoginPath = "/Account/Login";  // Redirect if not logged in
+    options.AccessDeniedPath = "/Account/AccessDenied"; // No permission page
+});
 
-            // Add services to the container.
-            builder.Services.AddDbContext<LibraryDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LibraryDbConnection")));
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
 
-            var app = builder.Build();
+builder.Services.AddControllersWithViews();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+var app = builder.Build();
 
-            app.UseHttpsRedirection();
-            app.UseRouting();
+// Use Authentication & Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
-            app.UseAuthorization();
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 
-            app.MapStaticAssets();
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
-
-            app.Run();
-        }
-    }
-}
+app.Run();

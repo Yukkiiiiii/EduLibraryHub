@@ -1,22 +1,15 @@
-﻿@model OnlineLibrary.Models.User
+﻿@model User
 
 <h2>Register</h2>
-@using (Html.BeginForm("Register", "Account", FormMethod.Post))
-{
-    <div>
-        @Html.LabelFor(m => m.Username)
-        @Html.TextBoxFor(m => m.Username)
-        @Html.ValidationMessageFor(m => m.Username)
-    </div>
-    <div>
-        @Html.LabelFor(m => m.Email)
-        @Html.TextBoxFor(m => m.Email)
-        @Html.ValidationMessageFor(m => m.Email)
-    </div>
-    <div>
-        @Html.LabelFor(m => m.Password)
-        @Html.PasswordFor(m => m.Password)
-        @Html.ValidationMessageFor(m => m.Password)
-    </div>
+<form method="post">
+    <label>Name:</label>
+    <input asp-for="Name" required /><br />
+
+    <label>Email:</label>
+    <input asp-for="Email" required /><br />
+
+    <label>Password:</label>
+    <input type="password" name="password" required /><br />
+
     <button type="submit">Register</button>
-}
+</form>
