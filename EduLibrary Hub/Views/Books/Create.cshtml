@@ -1,0 +1,41 @@
+@model EduLibraryHub.Models.Book
+
+@{
+    ViewData["Title"] = "Добави книга";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <!-- Другите полета -->
+    <button type="submit" class="btn btn-primary">Добави книга</button>
+</form>
+    <div>
+        <label asp-for="Title">Заглавие:</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Author">Автор:</label>
+        <input asp-for="Author" class="form-control" />
+        <span asp-validation-for="Author" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="ReleaseYear">Година на издаване:</label>
+        <input asp-for="ReleaseYear" type="number" class="form-control" />
+        <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Genre">Жанр:</label>
+        <input asp-for="Genre" class="form-control" />
+        <span asp-validation-for="Genre" class="text-danger"></span>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Добави книга</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

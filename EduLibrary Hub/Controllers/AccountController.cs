@@ -1,61 +1,61 @@
-using System.Linq;
-using System.Web.Mvc;
-using EduLibraryHub.Models;
 using Microsoft.AspNetCore.Mvc;
-using OnlineLibrary.Models;
+using EduLibraryHub.database;
+using EduLibraryHub.Models;
+using BCrypt.Net;
 
-namespace OnlineLibrary.Controllers
+namespace EduLibraryHub.Controllers
 {
     public class AccountController : Controller
     {
-        private LibraryDbContext db = new LibraryDbContext();
+        private readonly ApplicationDbContext _context;
 
-        // GET: Register
-        public ActionResult Register()
+        public AccountController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
         }
 
-        // POST: Register
+        public IActionResult Login() => View();
+
         [HttpPost]
-        public ActionResult Register(User user)
+        public IActionResult Login(string username, string password)
         {
-            if (ModelState.IsValid)
+            var user = _context.Users.SingleOrDefault(u => u.Username == username);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
-                // Хеширане на паролата
-                user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-                db.Users.Add(user);
-                db.SaveChanges();
-                return RedirectToAction("Login");
+                HttpContext.Session.SetString("Username", username); // Example session management
+                return RedirectToAction("Index", "Home"); 
             }
-            return View(user);
-        }
-
-        // GET: Login
-        public ActionResult Login()
-        {
+            ViewBag.Error = "Invalid username or password.";
             return View();
         }
 
-        // POST: Login
+        public IActionResult Register() => View();
+
         [HttpPost]
-        public ActionResult Login(string email, string password)
+        public IActionResult Register(string username, string password, string role = "User")
         {
-            var user = db.Users.FirstOrDefault(u => u.Email == email);
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                Session["UserId"] = user.Id;
-                Session["Username"] = user.Username;
-                return RedirectToAction("Index", "Home");
+                ModelState.AddModelError("", "Username and password are required.");
+                return View();
             }
-            ViewBag.Error = "Invalid email or password.";
-            return View();
-        }
 
-        // GET: Logout
-        public ActionResult Logout()
-        {
-            Session.Clear();
+            if (_context.Users.Any(u => u.Username == username))
+            {
+                ModelState.AddModelError("", "Username already exists.");
+                return View();
+            }
+
+            var user = new User
+            {
+                Username = username,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                Role = role
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
             return RedirectToAction("Login");
         }
     }

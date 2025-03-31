@@ -1,22 +1,35 @@
-﻿@model OnlineLibrary.Models.User
+﻿@model string // You can use a view model for better structure
+
+@{
+    ViewData["Title"] = "Register";
+}
 
 <h2>Register</h2>
-@using (Html.BeginForm("Register", "Account", FormMethod.Post))
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Username"></label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+@if (ViewData.ModelState.Any(m => m.Value.Errors.Count > 0))
 {
-    <div>
-        @Html.LabelFor(m => m.Username)
-        @Html.TextBoxFor(m => m.Username)
-        @Html.ValidationMessageFor(m => m.Username)
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.SelectMany(m => m.Value.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
     </div>
-    <div>
-        @Html.LabelFor(m => m.Email)
-        @Html.TextBoxFor(m => m.Email)
-        @Html.ValidationMessageFor(m => m.Email)
-    </div>
-    <div>
-        @Html.LabelFor(m => m.Password)
-        @Html.PasswordFor(m => m.Password)
-        @Html.ValidationMessageFor(m => m.Password)
-    </div>
-    <button type="submit">Register</button>
 }

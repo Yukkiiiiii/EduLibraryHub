@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35514.174 d17.12
+VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduLibraryHub", "EduLibrary Hub\EduLibraryHub.csproj", "{5C16CC9B-6479-4591-9D41-194666B0F67C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EduLibraryHub", "EduLibrary Hub\EduLibraryHub.csproj", "{5C16CC9B-6479-4591-9D41-194666B0F67C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {95D9EC4E-B7F0-412A-83A1-E180D6B24FAA}
 	EndGlobalSection
 EndGlobal

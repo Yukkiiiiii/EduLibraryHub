@@ -1,0 +1,24 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<EduLibraryHub.Models.Book>
+
+    <h2>Списък с книги</h2>
+    <a asp-action="Create">Добави нова книга</a>
+    <table border="1">
+        <tr>
+            <th>Заглавие</th>
+            <th>Автор</th>
+            <th>Жанр</th>
+            <th>Година</th>
+        </tr>
+        @foreach (var book in Model)
+    {
+        <tr>
+            <td>@book.Title</td>
+            <td>@book.Author</td>
+            <td>@book.Genre</td>
+            <td>@book.ReleaseYear</td>
+        </tr>
+    }
+    </table>
