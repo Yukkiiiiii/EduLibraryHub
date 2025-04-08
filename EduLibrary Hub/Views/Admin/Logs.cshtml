@@ -1,0 +1,9 @@
+﻿@model IEnumerable<dynamic>
+
+<h2>System Logs</h2>
+<ul>
+    @foreach (var log in Model)
+    {
+        <li>@log.Time - @log.Action</li>
+    }
+</ul>

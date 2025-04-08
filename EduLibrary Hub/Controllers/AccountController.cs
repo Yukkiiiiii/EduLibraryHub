@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+п»їusing Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using EduLibraryHub.database;
 using EduLibraryHub.Models;
@@ -33,7 +33,7 @@ namespace EduLibraryHub.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
-                ModelState.AddModelError(string.Empty, "Невалиден опит за вход.");
+                ModelState.AddModelError(string.Empty, "РќРµРІР°Р»РёРґРµРЅ РѕРїРёС‚ Р·Р° РІС…РѕРґ.");
             }
             return View(model);
         }
@@ -53,7 +53,7 @@ namespace EduLibraryHub.Controllers
 
                 if (result.Succeeded)
                 {
-                    TempData["SuccessMessage"] = "Регистрацията е успешна. Моля, влезте във Вашия акаунт.";
+                    TempData["SuccessMessage"] = "Р РµРіРёСЃС‚СЂР°С†РёСЏС‚Р° Рµ СѓСЃРїРµС€РЅР°. РњРѕР»СЏ, РІР»РµР·С‚Рµ РІСЉРІ Р’Р°С€РёСЏ Р°РєР°СѓРЅС‚.";
                     return RedirectToAction("Login", "Account");
                 }
 
