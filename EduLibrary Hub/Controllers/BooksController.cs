@@ -14,7 +14,7 @@ namespace EduLibraryHub.Controllers
             _context = context;
         }
 
-        // Списък с книги – вече имате това
+        // Списък с книги
         public IActionResult Index()
         {
             var books = _context.Books.ToList();
@@ -39,8 +39,9 @@ namespace EduLibraryHub.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
+            // Ако ModelState не е валиден, връщаме формата с грешки
             return View(book);
         }
+
     }
 }
-

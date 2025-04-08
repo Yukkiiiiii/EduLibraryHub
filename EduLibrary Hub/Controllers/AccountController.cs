@@ -1,62 +1,75 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using EduLibraryHub.database;
 using EduLibraryHub.Models;
-using BCrypt.Net;
+using System.Threading.Tasks;
 
 namespace EduLibraryHub.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
-            _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        public IActionResult Login() => View();
-
-        [HttpPost]
-        public IActionResult Login(string username, string password)
+        public IActionResult Login()
         {
-            var user = _context.Users.SingleOrDefault(u => u.Username == username);
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-            {
-                HttpContext.Session.SetString("Username", username); // Example session management
-                return RedirectToAction("Index", "Home"); 
-            }
-            ViewBag.Error = "Invalid username or password.";
             return View();
         }
 
-        public IActionResult Register() => View();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                ModelState.AddModelError(string.Empty, "Невалиден опит за вход.");
+            }
+            return View(model);
+        }
+        public IActionResult Register()
+        {
+            return View();
+        }
 
         [HttpPost]
-        public IActionResult Register(string username, string password, string role = "User")
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Username and password are required.");
-                return View();
+                var user = new IdentityUser { UserName = model.Username, Email = model.Email };
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Регистрацията е успешна. Моля, влезте във Вашия акаунт.";
+                    return RedirectToAction("Login", "Account");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
+            return View(model);
+        }
 
-            if (_context.Users.Any(u => u.Username == username))
-            {
-                ModelState.AddModelError("", "Username already exists.");
-                return View();
-            }
-
-            var user = new User
-            {
-                Username = username,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                Role = role
-            };
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-
-            return RedirectToAction("Login");
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
+

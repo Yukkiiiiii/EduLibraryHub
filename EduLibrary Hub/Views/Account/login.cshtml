@@ -1,28 +1,75 @@
-﻿@model string // You can use a view model for better structure
-
+﻿@model LoginViewModel
 @{
-    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Login</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow-sm w-100" style="max-width: 400px;">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4">Вход</h4>
 
-<form method="post">
-    <div class="form-group">
-        <label asp-for="Username"></label>
-        <input asp-for="Username" class="form-control" />
-        <span asp-validation-for="Username" class="text-danger"></span>
+            @* Ако има TempData за успешно съобщение (например след регистрация) *@
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label for="Username" class="form-label">Потребител</label>
+                    <input type="text" class="form-control" id="Username" name="Username" placeholder="Въведете потребителско име" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                @* Поле за парола с бутон за показване/скриване *@
+                <div class="mb-3">
+                    <label for="Password" class="form-label">Парола</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="Password" name="Password" placeholder="Въведете парола" />
+                        <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('Password')" title="Покажи/Скрий паролата">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="RememberMe" name="RememberMe" />
+                    <label class="form-check-label" for="RememberMe">Запомни ме</label>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Вход</button>
+                </div>
+
+                <div class="mt-3 text-center">
+                    <span>Нямаш акаунт? </span>
+                    <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Register", "Account")'">
+                        Регистрирай се
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
-
-@if (ViewBag.Error != null)
-{
-    <div class="alert alert-danger">@ViewBag.Error</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function togglePassword(inputId) {
+            var input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
+        }
+    </script>
 }

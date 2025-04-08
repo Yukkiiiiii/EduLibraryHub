@@ -3,22 +3,33 @@
 }
 @model List<EduLibraryHub.Models.Book>
 
-    <h2>Списък с книги</h2>
-    <a asp-action="Create">Добави нова книга</a>
-    <table border="1">
-        <tr>
-            <th>Заглавие</th>
-            <th>Автор</th>
-            <th>Жанр</th>
-            <th>Година</th>
-        </tr>
-        @foreach (var book in Model)
-    {
-        <tr>
-            <td>@book.Title</td>
-            <td>@book.Author</td>
-            <td>@book.Genre</td>
-            <td>@book.ReleaseYear</td>
-        </tr>
-    }
+<div class="container mt-5">
+    <h2 class="mb-4">Списък с книги</h2>
+
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-primary">Добави нова книга</a>
+    </div>
+
+    <table class="table table-bordered table-hover shadow-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Заглавие</th>
+                <th>Автор</th>
+                <th>Жанр</th>
+                <th>Година</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.Genre</td>
+                    <td>@book.ReleaseYear</td>
+                </tr>
+            }
+        </tbody>
     </table>
+</div>
+
