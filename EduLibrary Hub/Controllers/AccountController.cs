@@ -1,27 +1,30 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using EduLibraryHub.database;
 using EduLibraryHub.Models;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EduLibraryHub.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        // Конструктор: DI контейнерът доставя UserManager и SignInManager
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
         }
 
+        // GET: /Account/Login
         public IActionResult Login()
         {
             return View();
         }
 
+        // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -37,26 +40,37 @@ namespace EduLibraryHub.Controllers
             }
             return View(model);
         }
+
+        // GET: /Account/Register
         public IActionResult Register()
         {
             return View();
         }
 
+        // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = model.Username, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                // Ако ModelState е невалиден, ще видите грешките във View чрез ValidationSummary.
+                return View(model);
+            }
 
-                if (result.Succeeded)
-                {
-                    TempData["SuccessMessage"] = "Регистрацията е успешна. Моля, влезте във Вашия акаунт.";
-                    return RedirectToAction("Login", "Account");
-                }
+            // Създаваме нов потребител с попълнените данни
+            var user = new User { UserName = model.Username, Email = model.Email };
+            var result = await _userManager.CreateAsync(user, model.Password);
 
+            if (result.Succeeded)
+            {
+                // Ако регистрацията е успешна, записваме съобщение и пренасочваме към Login
+                TempData["SuccessMessage"] = "Регистрацията е успешна. Моля, влезте във Вашия акаунт.";
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                // Ако има грешки от Identity (напр. паролата не отговаря на политиката), ги добавяме към ModelState
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -65,6 +79,7 @@ namespace EduLibraryHub.Controllers
             return View(model);
         }
 
+        // GET: /Account/Logout
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -72,4 +87,3 @@ namespace EduLibraryHub.Controllers
         }
     }
 }
-

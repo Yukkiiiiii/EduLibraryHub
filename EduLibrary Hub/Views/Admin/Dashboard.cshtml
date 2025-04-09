@@ -1,4 +1,4 @@
-@model EduLibraryHub.Controllers.AdminDashboardViewModel
+@model EduLibraryHub.Models.AdminDashboardViewModel
 
 @{
     ViewData["Title"] = "Admin Dashboard";
@@ -12,8 +12,9 @@
         <tr>
             <th>Title</th>
             <th>Author</th>
-            <th>ISBN</th>
-            <th>Description</th>
+            <th>Inventory</th>
+            <th>ReleaseYear</th>
+            <th>Tome</th>
         </tr>
     </thead>
     <tbody>
@@ -22,8 +23,9 @@
             <tr>
                 <td>@book.Title</td>
                 <td>@book.Author</td>
-                <td>@book.Genre</td>
+                <td>@book.Tome</td>
                 <td>@book.ReleaseYear</td>
+                <td>@book.Inventory</td>
             </tr>
         }
     </tbody>
@@ -41,7 +43,7 @@
         @foreach (var user in Model.Users)
         {
             <tr>
-                <td>@user.Username</td>
+                <td>@user.UserName</td>
                 <td>@user.Role</td>
             </tr>
         }
