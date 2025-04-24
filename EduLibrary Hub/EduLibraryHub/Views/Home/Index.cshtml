@@ -1,8 +1,21 @@
-﻿@{
+﻿﻿@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div class="d-flex">
+        <div class="col-4 text-center">
+            <h2>@ViewData["Users"]</h2>
+            <p>Users</p>
+        </div>
+        <div class="col-4 text-center">
+            <h2>@ViewData["Books"]</h2>
+            <p>Books</p>
+        </div>
+        <div class="col-4 text-center">
+            <h2>@ViewData["Reviews"]</h2>
+            <p>Reviews</p>
+        </div>
+    </div>
 </div>

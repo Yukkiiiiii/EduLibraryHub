@@ -11,7 +11,10 @@ public class ApplicationDbContext : IdentityDbContext
     {
     }
 
-public DbSet<EduLibraryHub.Data.Entities.Book> Book { get; set; } = default!;
+    public DbSet<EduLibraryHub.Data.Entities.Book> Book { get; set; } = default!;
 
-public DbSet<EduLibraryHub.Data.Entities.Review> Review { get; set; } = default!;
+    public DbSet<EduLibraryHub.Data.Entities.Review> Review { get; set; } = default!;
+
+    public DbSet<EduLibraryHub.Models.UserViewModel> UserViewModel { get; set; } = default!;
+
 }

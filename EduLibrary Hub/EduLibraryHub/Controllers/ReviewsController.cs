@@ -16,9 +16,9 @@ namespace EduLibraryHub.Controllers
     public class ReviewsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        public ReviewsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public ReviewsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;

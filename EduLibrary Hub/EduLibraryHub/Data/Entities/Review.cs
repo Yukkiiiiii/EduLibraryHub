@@ -25,7 +25,7 @@ namespace EduLibraryHub.Data.Entities
         
         public string? UserId { get; set; }
         [Display(Name ="Потребител")]
-        public virtual IdentityUser? User { get; set; }
+        public virtual User? User { get; set; }
         [Display(Name ="Добавен")]
         public DateTime? DatePosted { get; set; }
 
