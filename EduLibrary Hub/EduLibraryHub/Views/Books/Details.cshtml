@@ -1,57 +1,43 @@
 ﻿@model EduLibraryHub.Data.Entities.Book
 
 @{
-    ViewData["Title"] = "Детайли";
+    ViewData["Title"] = "Details";
 }
 
-<h1>Детайли</h1>
+<h1>Details</h1>
 
 <div>
-    <h4>Книга</h4>
+    <h4>Book</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Author)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReleaseYear)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReleaseYear)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Inventory)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Inventory)
+        <dt class="col-sm-2">Title</dt>
+        <dd class="col-sm-10">@Model.Title</dd>
+
+        <dt class="col-sm-2">Author</dt>
+        <dd class="col-sm-10">@Model.Author</dd>
+
+        <dt class="col-sm-2">Release Year</dt>
+        <dd class="col-sm-10">@Model.ReleaseYear</dd>
+
+        <dt class="col-sm-2">Tome</dt>
+        <dd class="col-sm-10">@Model.Tome</dd>
+
+        <dt class="col-sm-2">Inventory</dt>
+        <dd class="col-sm-10">@Model.Inventory</dd>
+
+        <dt class="col-sm-2">Genre</dt>
+        <dd class="col-sm-10">@Model.Genre?.Name</dd>
+
+        <dt class="col-sm-2">Tags</dt>
+        <dd class="col-sm-10">
+            @foreach (var tag in Model.Tags)
+            {
+                <span class="badge badge-secondary">@tag.Name</span>
+            }
         </dd>
     </dl>
-    <h4>Отзиви</h4>
-    @foreach(var review in Model.Reviews)
-    {
-        <div class="card p-3 my-3">
-            <p class="text-body">@review.Content</p>
-            <p class="fw-bold">Оценка: @review.Rating / 5</p>
-            <p class="small">Отзив от @review.User.UserName</p>
-        </div>
-    }
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Редактирай</a> |
-    <a asp-action="Index">Към списъка</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
 </div>

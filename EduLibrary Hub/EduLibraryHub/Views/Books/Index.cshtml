@@ -1,59 +1,46 @@
 ﻿@model IEnumerable<EduLibraryHub.Data.Entities.Book>
 
 @{
-    ViewData["Title"] = "Книги";
+    ViewData["Title"] = "Index";
 }
 
-<h1>Книги</h1>
+<h1>Books</h1>
 
 <p>
-    <a asp-action="Create">Добави книга</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Author)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReleaseYear)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Inventory)
-            </th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Release Year</th>
+            <th>Tome</th>
+            <th>Inventory</th>
+            <th>Genre</th>
+            <th>Tags</th>
+            <th>Reviews</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Inventory)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редактирай</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Прегледай</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Изтрий</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Author</td>
+                <td>@item.ReleaseYear</td>
+                <td>@item.Tome</td>
+                <td>@item.Inventory</td>
+                <td>@item.Genre?.Name</td>
+                <td>@string.Join(", ", item.Tags.Select(t => t.Name))</td>
+                <td>@item.Reviews?.Count() ?? 0</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

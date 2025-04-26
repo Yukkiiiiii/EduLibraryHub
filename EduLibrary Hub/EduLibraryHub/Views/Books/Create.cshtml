@@ -1,17 +1,16 @@
 ﻿@model EduLibraryHub.Data.Entities.Book
 
 @{
-    ViewData["Title"] = "Добави";
+    ViewData["Title"] = "Create";
 }
 
-<h1>Добави</h1>
+<h1>Create</h1>
 
-<h4>Книга</h4>
+<h4>Book</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -38,16 +37,26 @@
                 <span asp-validation-for="Inventory" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Добави" class="btn btn-primary" />
+                <label asp-for="GenreId" class="control-label"></label>
+                <select asp-for="GenreId" asp-items="@(ViewData["GenreId"] as SelectList)" class="form-control">
+                    <option value="">-- Select Genre --</option>
+                </select>
+                <span asp-validation-for="GenreId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label>Tags</label>
+                <select name="TagIds"
+                        asp-items="@(ViewData["TagIds"] as MultiSelectList)"
+                        multiple
+                        class="form-control">
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
 <div>
-    <a asp-action="Index">Към списъка</a>
+    <a asp-action="Index">Back to List</a>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
