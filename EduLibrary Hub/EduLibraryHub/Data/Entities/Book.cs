@@ -16,6 +16,10 @@ namespace EduLibraryHub.Data.Entities
         public string? Tome { get; set; }
         [Display(Name = "Наличност")]
         public string Inventory { get; set; }
+        [Display(Name = "Genre")]
+        public virtual Genre? Genre { get; set; }
+        public int? GenreId { get; set; }
+        public virtual List<Tag>? Tags { get; set; } = new List<Tag>();
         public virtual List<Review>? Reviews { get; set; }
     }
 }

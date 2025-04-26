@@ -27,7 +27,7 @@ namespace EduLibraryHub.Controllers
         // GET: Reviews
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Review.Include(r => r.Book);
+            var applicationDbContext = _context.Reviews.Include(r => r.Book);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -39,7 +39,7 @@ namespace EduLibraryHub.Controllers
                 return NotFound();
             }
 
-            var review = await _context.Review
+            var review = await _context.Reviews
                 .Include(r => r.Book)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (review == null)
@@ -54,7 +54,7 @@ namespace EduLibraryHub.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title");
+            ViewData["BookId"] = new SelectList(_context.Books, "Id", "Title");
            
             return View();
         }
@@ -77,7 +77,7 @@ namespace EduLibraryHub.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", review.BookId);
+            ViewData["BookId"] = new SelectList(_context.Books, "Id", "Title", review.BookId);
             return View(review);
         }
 
@@ -90,12 +90,12 @@ namespace EduLibraryHub.Controllers
                 return NotFound();
             }
 
-            var review = await _context.Review.FindAsync(id);
+            var review = await _context.Reviews.FindAsync(id);
             if (review == null)
             {
                 return NotFound();
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", review.BookId);
+            ViewData["BookId"] = new SelectList(_context.Books, "Id", "Title", review.BookId);
             return View(review);
         }
 
@@ -138,7 +138,7 @@ namespace EduLibraryHub.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", review.BookId);
+            ViewData["BookId"] = new SelectList(_context.Books, "Id", "Title", review.BookId);
             return View(review);
         }
 
@@ -150,7 +150,7 @@ namespace EduLibraryHub.Controllers
                 return NotFound();
             }
 
-            var review = await _context.Review
+            var review = await _context.Reviews
                 .Include(r => r.Book)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (review == null)
@@ -167,10 +167,10 @@ namespace EduLibraryHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var review = await _context.Review.FindAsync(id);
+            var review = await _context.Reviews.FindAsync(id);
             if (review != null)
             {
-                _context.Review.Remove(review);
+                _context.Reviews.Remove(review);
             }
 
             await _context.SaveChangesAsync();
@@ -179,7 +179,7 @@ namespace EduLibraryHub.Controllers
 
         private bool ReviewExists(int id)
         {
-            return _context.Review.Any(e => e.Id == id);
+            return _context.Reviews.Any(e => e.Id == id);
         }
     }
 }

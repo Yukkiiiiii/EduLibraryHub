@@ -20,7 +20,7 @@ namespace EduLibraryHub.Data.Seeders
             var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
             var ctx = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             ctx.Database.Migrate();
-            if (!ctx.Book.Any())
+            if (!ctx.Books.Any())
             {
                 var path = Path.Combine(env.ContentRootPath, "Data", "BookData.csv");
                 var lines = File.ReadAllLines(path, Encoding.GetEncoding("windows-1251")).Skip(1);
@@ -44,7 +44,7 @@ namespace EduLibraryHub.Data.Seeders
                         Inventory = parts[5].Trim('"')
                     };
                 }).ToList();
-                ctx.Book.AddRange(items);
+                ctx.Books.AddRange(items);
                 ctx.SaveChanges();
             }
         }

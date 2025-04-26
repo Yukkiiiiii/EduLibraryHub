@@ -18,8 +18,8 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        ViewData["Books"] = _context.Book.Count();
-        ViewData["Reviews"] = _context.Review.Count();
+        ViewData["Books"] = _context.Books.Count();
+        ViewData["Reviews"] = _context.Reviews.Count();
         ViewData["Users"] = _context.Users.Count();
 
         return View();
