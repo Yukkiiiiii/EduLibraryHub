@@ -25,6 +25,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     UserSeeder.Initialize(services).Wait();
+    LibrarySeeder.Seed(services).Wait();
 }
 
 // Configure the HTTP request pipeline.
