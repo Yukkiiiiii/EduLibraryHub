@@ -1,0 +1,29 @@
+﻿@model IEnumerable<EduLibraryHub.Data.Entities.BorrowRecord>
+
+@{
+    ViewData["Title"] = "All Borrows";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>User</th>
+            <th>Borrowed On</th>
+            <th>Returned On</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var br in Model)
+        {
+            <tr>
+                <td>@br.Book.Title</td>
+                <td>@br.User.UserName</td>
+                <td>@br.BorrowDate.ToString("yyyy-MM-dd")</td>
+                <td>@(br.ReturnDate.HasValue ? br.ReturnDate.Value.ToString("yyyy-MM-dd") : "-")</td>
+            </tr>
+        }
+    </tbody>
+</table>
