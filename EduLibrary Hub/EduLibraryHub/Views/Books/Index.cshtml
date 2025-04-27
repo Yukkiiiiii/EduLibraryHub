@@ -1,15 +1,18 @@
 ﻿@model IEnumerable<EduLibraryHub.Data.Entities.Book>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Books";
+    var page = (int)(ViewBag.Page ?? 1);
+    var totalPages = (int)(ViewBag.TotalPages ?? 1);
 }
 
-<h1>Books</h1>
+<h1>@ViewData["Title"]</h1>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
-<table class="table">
+
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Title</th>
@@ -34,7 +37,7 @@
                 <td>@item.Inventory</td>
                 <td>@item.Genre?.Name</td>
                 <td>@string.Join(", ", item.Tags.Select(t => t.Name))</td>
-                <td>@item.Reviews?.Count() ?? 0</td>
+                <td>@(item.Reviews?.Count() ?? 0)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
@@ -44,3 +47,49 @@
         }
     </tbody>
 </table>
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Paging">
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item @(page == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(page - 1)">« Prev</a>
+            </li>
+
+            @for (int p = 1; p <= Math.Min(3, totalPages); p++)
+            {
+                <li class="page-item @(p == page ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@p">@p</a>
+                </li>
+            }
+
+            @if (totalPages > 4)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">…</span>
+                </li>
+            }
+
+            @if (totalPages > 3)
+            {
+                <li class="page-item @(page == totalPages ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@totalPages">@totalPages</a>
+                </li>
+            }
+
+            <!-- Next -->
+            <li class="page-item @(page == totalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(page + 1)">Next »</a>
+            </li>
+        </ul>
+    </nav>
+}
