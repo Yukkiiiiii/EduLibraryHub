@@ -19,22 +19,47 @@ namespace EduLibraryHub.Controllers
 
         public async Task<IActionResult> Index(int page = 1)
         {
-            var query = _context.Books
+            ViewBag.Page = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(
+                await _context.Books.CountAsync()
+                / (double)PageSize
+            );
+
+            var books = await _context.Books
                 .Include(b => b.Genre)
                 .Include(b => b.Tags)
-                .Include(b => b.Reviews);
-
-            var totalCount = await query.CountAsync();
-            ViewBag.Page = page;
-            ViewBag.TotalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
-
-            var books = await query
+                .Include(b => b.Reviews)
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize)
                 .ToListAsync();
 
             return View(books);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Search(string searchString)
+        {
+            var query = _context.Books
+                .Include(b => b.Genre)
+                .Include(b => b.Tags)
+                .Include(b => b.Reviews)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                query = query.Where(b =>
+                    b.Title.Contains(searchString) ||
+                    b.Author.Contains(searchString)
+                );
+            }
+
+            var rows = await query
+                .Take(PageSize)               
+                .ToListAsync();
+
+            return PartialView("_BookRows", rows);
+        }
+
 
         public async Task<IActionResult> Details(int? id)
         {

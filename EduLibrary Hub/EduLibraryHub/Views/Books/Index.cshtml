@@ -8,6 +8,15 @@
 
 <h1>@ViewData["Title"]</h1>
 
+<form class="form-inline mb-3">
+    <div class="input-group">
+        <input id="searchBox"
+               class="form-control"
+               type="text"
+               placeholder="Search by title or author…" />
+    </div>
+</form>
+
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
@@ -26,25 +35,9 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Title</td>
-                <td>@item.Author</td>
-                <td>@item.ReleaseYear</td>
-                <td>@item.Tome</td>
-                <td>@item.Inventory</td>
-                <td>@item.Genre?.Name</td>
-                <td>@string.Join(", ", item.Tags.Select(t => t.Name))</td>
-                <td>@(item.Reviews?.Count() ?? 0)</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
+    <tbody id="books-body">
+        @* initial load *@
+        @Html.Partial("_BookRows", Model)
     </tbody>
 </table>
 
@@ -52,13 +45,16 @@
 {
     <nav aria-label="Paging">
         <ul class="pagination justify-content-center">
-
+            <!-- Prev -->
             <li class="page-item @(page == 1 ? "disabled" : "")">
                 <a class="page-link"
                    asp-action="Index"
-                   asp-route-page="@(page - 1)">« Prev</a>
+                   asp-route-page="@(page - 1)">
+                    « Prev
+                </a>
             </li>
 
+            <!-- Pages 1,2,3 -->
             @for (int p = 1; p <= Math.Min(3, totalPages); p++)
             {
                 <li class="page-item @(p == page ? "active" : "")">
@@ -68,6 +64,7 @@
                 </li>
             }
 
+            <!-- Ellipsis if there are more pages -->
             @if (totalPages > 4)
             {
                 <li class="page-item disabled">
@@ -75,12 +72,15 @@
                 </li>
             }
 
+            <!-- Last page -->
             @if (totalPages > 3)
             {
                 <li class="page-item @(page == totalPages ? "active" : "")">
                     <a class="page-link"
                        asp-action="Index"
-                       asp-route-page="@totalPages">@totalPages</a>
+                       asp-route-page="@totalPages">
+                        @totalPages
+                    </a>
                 </li>
             }
 
@@ -88,8 +88,32 @@
             <li class="page-item @(page == totalPages ? "disabled" : "")">
                 <a class="page-link"
                    asp-action="Index"
-                   asp-route-page="@(page + 1)">Next »</a>
+                   asp-route-page="@(page + 1)">
+                    Next »
+                </a>
             </li>
         </ul>
     </nav>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const box = document.getElementById('searchBox');
+            let timer = null;
+
+            box.addEventListener('input', function() {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    const term = box.value;
+                    fetch(`@Url.Action("Search", "Books")?searchString=`
+                           + encodeURIComponent(term))
+                      .then(r => r.text())
+                      .then(html => {
+                          document.getElementById('books-body').innerHTML = html;
+                      });
+                }, 200);
+            });
+        });
+    </script>
 }
