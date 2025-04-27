@@ -21,5 +21,6 @@ namespace EduLibraryHub.Data.Entities
         public int? GenreId { get; set; }
         public virtual List<Tag>? Tags { get; set; } = new List<Tag>();
         public virtual List<Review>? Reviews { get; set; }
+        public virtual List<BorrowRecord>? BorrowRecords { get; set; }
     }
 }

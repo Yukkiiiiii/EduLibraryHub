@@ -4,17 +4,50 @@
     ViewData["Title"] = "Books";
     var page = (int)(ViewBag.Page ?? 1);
     var totalPages = (int)(ViewBag.TotalPages ?? 1);
+
+    var currentFilter = (string)ViewData["CurrentFilter"];
+    var currentGenre = (int?)ViewData["CurrentGenre"];
+    var currentTags = (int[])ViewData["CurrentTags"];
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<form class="form-inline mb-3">
-    <div class="input-group">
+<form method="get" class="form-inline mb-3">
+    <div class="input-group mr-2">
         <input id="searchBox"
+               name="searchString"
                class="form-control"
                type="text"
-               placeholder="Search by title or author…" />
+               placeholder="Search by title or author…"
+               value="@currentFilter" />
     </div>
+
+    <select name="genreId"
+            class="form-control mr-2">
+        <option value="">All Genres</option>
+        @foreach (var g in (SelectList)ViewData["Genres"])
+        {
+            <option value="@g.Value"
+                    selected="@(g.Value == (currentGenre?.ToString() ?? ""))">
+                @g.Text
+            </option>
+        }
+    </select>
+
+    <select name="tagIds"
+            multiple
+            class="form-control mr-2"
+            style="min-width:200px">
+        @foreach (var t in (MultiSelectList)ViewData["Tags"])
+        {
+            <option value="@t.Value"
+                    selected="@(currentTags != null && currentTags.Contains(int.Parse(t.Value)) ? "selected" : null)">
+                @t.Text
+            </option>
+        }
+    </select>
+
+    <button type="submit" class="btn btn-outline-secondary">Filter</button>
 </form>
 
 <p>
@@ -36,7 +69,6 @@
         </tr>
     </thead>
     <tbody id="books-body">
-        @* initial load *@
         @Html.Partial("_BookRows", Model)
     </tbody>
 </table>
@@ -45,26 +77,29 @@
 {
     <nav aria-label="Paging">
         <ul class="pagination justify-content-center">
-            <!-- Prev -->
             <li class="page-item @(page == 1 ? "disabled" : "")">
                 <a class="page-link"
                    asp-action="Index"
+                   asp-route-searchString="@currentFilter"
+                   asp-route-genreId="@currentGenre"
+                   asp-route-tagIds="@(currentTags)"
                    asp-route-page="@(page - 1)">
                     « Prev
                 </a>
             </li>
 
-            <!-- Pages 1,2,3 -->
             @for (int p = 1; p <= Math.Min(3, totalPages); p++)
             {
                 <li class="page-item @(p == page ? "active" : "")">
                     <a class="page-link"
                        asp-action="Index"
+                       asp-route-searchString="@currentFilter"
+                       asp-route-genreId="@currentGenre"
+                       asp-route-tagIds="@(currentTags)"
                        asp-route-page="@p">@p</a>
                 </li>
             }
 
-            <!-- Ellipsis if there are more pages -->
             @if (totalPages > 4)
             {
                 <li class="page-item disabled">
@@ -72,48 +107,28 @@
                 </li>
             }
 
-            <!-- Last page -->
             @if (totalPages > 3)
             {
                 <li class="page-item @(page == totalPages ? "active" : "")">
                     <a class="page-link"
                        asp-action="Index"
-                       asp-route-page="@totalPages">
-                        @totalPages
-                    </a>
+                       asp-route-searchString="@currentFilter"
+                       asp-route-genreId="@currentGenre"
+                       asp-route-tagIds="@(currentTags)"
+                       asp-route-page="@totalPages">@totalPages</a>
                 </li>
             }
 
-            <!-- Next -->
             <li class="page-item @(page == totalPages ? "disabled" : "")">
                 <a class="page-link"
                    asp-action="Index"
+                   asp-route-searchString="@currentFilter"
+                   asp-route-genreId="@currentGenre"
+                   asp-route-tagIds="@(currentTags)"
                    asp-route-page="@(page + 1)">
                     Next »
                 </a>
             </li>
         </ul>
     </nav>
-}
-
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const box = document.getElementById('searchBox');
-            let timer = null;
-
-            box.addEventListener('input', function() {
-                clearTimeout(timer);
-                timer = setTimeout(() => {
-                    const term = box.value;
-                    fetch(`@Url.Action("Search", "Books")?searchString=`
-                           + encodeURIComponent(term))
-                      .then(r => r.text())
-                      .then(html => {
-                          document.getElementById('books-body').innerHTML = html;
-                      });
-                }, 200);
-            });
-        });
-    </script>
 }

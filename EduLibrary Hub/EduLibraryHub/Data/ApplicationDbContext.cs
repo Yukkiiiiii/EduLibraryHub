@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Genre> Genres { get; set; }
 
     public DbSet<Tag> Tags { get; set; }
+    public DbSet<BorrowRecord> BorrowRecords { get; set; }
 
     public DbSet<UserViewModel> UserViewModels { get; set; } = default!;
 
@@ -42,5 +43,18 @@ public class ApplicationDbContext : IdentityDbContext
             .HasMany(b => b.Tags)
             .WithMany(t => t.Books)
             .UsingEntity(j => j.ToTable("BookTags"));
+
+        builder.Entity<BorrowRecord>()
+            .HasOne(br => br.Book)
+            .WithMany(b => b.BorrowRecords)
+            .HasForeignKey(br => br.BookId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<BorrowRecord>()
+            .HasOne(br => br.User)
+            .WithMany(u => u.BorrowRecords)
+            .HasForeignKey(br => br.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }

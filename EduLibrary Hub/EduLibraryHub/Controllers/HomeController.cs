@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using EduLibraryHub.Models;
 using EduLibraryHub.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduLibraryHub.Controllers;
 
@@ -16,14 +17,14 @@ public class HomeController : Controller
         _context = context;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        ViewData["Books"] = _context.Books.Count();
-        ViewData["Reviews"] = _context.Reviews.Count();
-        ViewData["Users"] = _context.Users.Count();
-        ViewData["Tags"] = _context.Tags.Count();
-        ViewData["Genres"] = _context.Genres.Count();
-
+        ViewData["Users"] = await _context.Users.CountAsync();
+        ViewData["Books"] = await _context.Books.CountAsync();
+        ViewData["Reviews"] = await _context.Reviews.CountAsync();
+        ViewData["Tags"] = await _context.Tags.CountAsync();
+        ViewData["Genres"] = await _context.Genres.CountAsync();
+        ViewData["Borrows"] = await _context.BorrowRecords.CountAsync();
         return View();
     }
 

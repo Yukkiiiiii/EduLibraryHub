@@ -2,42 +2,46 @@
 
 @{
     ViewData["Title"] = "Details";
+    var active = ViewBag.ActiveBorrow as EduLibraryHub.Data.Entities.BorrowRecord;
+    var avail = ViewBag.Available as int? ?? 0;
 }
 
-<h1>Details</h1>
+<h1>@Model.Title</h1>
 
-<div>
-    <h4>Book</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Title</dt>
-        <dd class="col-sm-10">@Model.Title</dd>
+<dl class="row">
+    <dt class="col-sm-2">Author</dt>
+    <dd class="col-sm-10">@Model.Author</dd>
 
-        <dt class="col-sm-2">Author</dt>
-        <dd class="col-sm-10">@Model.Author</dd>
+    <dt class="col-sm-2">Year</dt>
+    <dd class="col-sm-10">@Model.ReleaseYear</dd>
 
-        <dt class="col-sm-2">Release Year</dt>
-        <dd class="col-sm-10">@Model.ReleaseYear</dd>
+    <dt class="col-sm-2">Available</dt>
+    <dd class="col-sm-10">@avail</dd>
 
-        <dt class="col-sm-2">Tome</dt>
-        <dd class="col-sm-10">@Model.Tome</dd>
+    <dt class="col-sm-2">Genre</dt>
+    <dd class="col-sm-10">@Model.Genre?.Name</dd>
 
-        <dt class="col-sm-2">Inventory</dt>
-        <dd class="col-sm-10">@Model.Inventory</dd>
+    <dt class="col-sm-2">Tags</dt>
+    <dd class="col-sm-10">@string.Join(", ", Model.Tags.Select(t => t.Name))</dd>
+</dl>
 
-        <dt class="col-sm-2">Genre</dt>
-        <dd class="col-sm-10">@Model.Genre?.Name</dd>
+@if (User.Identity.IsAuthenticated)
+{
+    if (active == null && avail > 0)
+    {
+        <form asp-action="Borrow" asp-route-id="@Model.Id" method="post">
+            <button type="submit" class="btn btn-success">Borrow</button>
+        </form>
+    }
+    else if (active != null)
+    {
+        <form asp-action="Return" asp-route-id="@Model.Id" method="post">
+            <button type="submit" class="btn btn-warning">Return</button>
+        </form>
+    }
+}
 
-        <dt class="col-sm-2">Tags</dt>
-        <dd class="col-sm-10">
-            @foreach (var tag in Model.Tags)
-            {
-                <span class="badge badge-secondary">@tag.Name</span>
-            }
-        </dd>
-    </dl>
-</div>
-<div>
+<p>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
-</div>
+</p>
