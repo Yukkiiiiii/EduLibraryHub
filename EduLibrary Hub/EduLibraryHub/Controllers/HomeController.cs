@@ -21,6 +21,8 @@ public class HomeController : Controller
         ViewData["Books"] = _context.Books.Count();
         ViewData["Reviews"] = _context.Reviews.Count();
         ViewData["Users"] = _context.Users.Count();
+        ViewData["Tags"] = _context.Tags.Count();
+        ViewData["Genres"] = _context.Genres.Count();
 
         return View();
     }
